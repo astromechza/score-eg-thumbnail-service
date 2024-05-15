@@ -3,7 +3,7 @@ metadata:
   name: thumbnail-service
 containers:
   main:
-    image: ghcr.io/astromechza/score-eg-thumbnail-service:latest
+    image: ghcr.io/astromechza/score-eg-thumbnail-service:main
     variables:
       AMQP_CONNECTION: "amqp://${resources.queue.username}:${resources.queue.password}@${resources.queue.host}:${resources.queue.port}/${resources.queue.vhost}"
 resources:
