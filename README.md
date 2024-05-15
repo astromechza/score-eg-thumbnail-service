@@ -10,21 +10,21 @@ Exchange: "" (default exchange)
 
 Routing Key: `thumbnail-generation`
 
-Message Body: <the raw png, jpeg, or gif> contents
+Message Body: the raw png, jpeg, or gif contents
 
 Reply-To: the routing key to send the output message to
 
-Message-Id: an optional message id to include in the logs
+Message-Id: an optional message id to include in the logs -- use this to match responses to requests
 
 ## Output message
 
 Exchange: "" (default exchange)
 
-Routing Key: <whatever the input message declared in Reply-To>
+Routing Key: whatever the input message declared in Reply-To
 
 Message Body: either the raw 200x200 jpeg bytes, or an errorCode
 
-Correlation-Id: a copy of the message id that resulted in this response
+Correlation-Id: a copy of the message id that resulted in this response -- use this to match responses to requests
 
 # Testing with Score
 
