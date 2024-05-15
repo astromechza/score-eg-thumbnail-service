@@ -48,3 +48,6 @@ AMQP_CONNECTION=$(score-compose resources get-outputs 'amqp.default#shared' --fo
 ```
 
 This will run the test and then write the output thumbnail to the local directory.
+
+![lenna.png](./lenna.png)
+![lenna_output.jpeg](./lenna_output.jpeg)
