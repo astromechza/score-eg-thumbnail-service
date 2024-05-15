@@ -1,0 +1,74 @@
+name: score-eg-thumbnail-service
+services:
+    rabbitmq-Z5ZOCm:
+        environment:
+            RABBITMQ_DEFAULT_PASS: guest
+            RABBITMQ_DEFAULT_USER: guest
+            RABBITMQ_ERLANG_COOKIE: XUqHCMEKuNLWcOzbSJBL
+        healthcheck:
+            test:
+                - CMD-SHELL
+                - rabbitmq-diagnostics -q check_port_connectivity
+            timeout: 5s
+            interval: 2s
+            retries: 5
+        image: rabbitmq:3-management-alpine
+        ports:
+            - target: 5672
+              published: "15672"
+            - target: 15672
+              published: "16672"
+        restart: always
+        volumes:
+            - type: volume
+              source: rabbitmq-Z5ZOCm-data
+              target: /var/lib/rabbitmq
+    rabbitmq-Z5ZOCm-init:
+        command:
+            - -c
+            - |
+              set -exu
+              for s in /db-scripts/*.sh; do source $$s; done
+        depends_on:
+            rabbitmq-Z5ZOCm:
+                condition: service_healthy
+                restart: true
+                required: false
+        entrypoint:
+            - /bin/sh
+        environment:
+            RABBITMQ_ERLANG_COOKIE: XUqHCMEKuNLWcOzbSJBL
+        image: rabbitmq:3-management-alpine
+        labels:
+            dev.score.compose.labels.is-init-container: "true"
+        network_mode: service:rabbitmq-Z5ZOCm
+        volumes:
+            - type: bind
+              source: .score-compose/mounts/rabbitmq-Z5ZOCm-db-scripts
+              target: /db-scripts
+    thumbnail-service-main:
+        annotations:
+            compose.score.dev/workload-name: thumbnail-service
+        build:
+            context: .
+        depends_on:
+            wait-for-resources:
+                condition: service_started
+                required: false
+        environment:
+            AMQP_CONNECTION: amqp://user-zhrwGpOq:5jsJ6yVpgSqNpkPa@rabbitmq-Z5ZOCm:5672/vhost-cWdYUyZF
+        hostname: thumbnail-service
+    wait-for-resources:
+        command:
+            - echo
+        depends_on:
+            rabbitmq-Z5ZOCm:
+                condition: service_healthy
+                required: true
+            rabbitmq-Z5ZOCm-init:
+                condition: service_completed_successfully
+                required: true
+        image: alpine
+volumes:
+    rabbitmq-Z5ZOCm-data:
+        driver: local

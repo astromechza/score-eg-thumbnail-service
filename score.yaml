@@ -1,0 +1,12 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: thumbnail-service
+containers:
+  main:
+    image: .
+    variables:
+      AMQP_CONNECTION: "amqp://${resources.queue.username}:${resources.queue.password}@${resources.queue.host}:${resources.queue.port}/${resources.queue.vhost}"
+resources:
+  queue:
+    type: amqp
+    id: shared
