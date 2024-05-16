@@ -1,6 +1,6 @@
 # score-eg-thumbnail-service
 
-An example service that accepts reads a queue of image events and responds to them with generated thumbnails.
+An example service that accepts reads a queue of image events and responds to them with generated thumbnails. This is used by <https://github.com/astromechza/score-eg-image-service>.
 
 The message protocol is very simple:
 
@@ -51,5 +51,6 @@ AMQP_CONNECTION=$(score-compose resources get-outputs 'amqp.default#shared' --fo
 
 This will run the test and then write the output thumbnail to the local directory.
 
-![lenna.png](./lenna.png)
-![lenna_output.jpeg](./lenna_output.jpeg)
+![library.jpg](samples/library.jpg)
+
+![library_output.jpeg](samples/library_output.jpeg)
