@@ -1,10 +1,10 @@
 name: score-eg-thumbnail-service
 services:
-    rabbitmq-Z5ZOCm:
+    rabbitmq-WfmJxZ:
         environment:
             RABBITMQ_DEFAULT_PASS: guest
             RABBITMQ_DEFAULT_USER: guest
-            RABBITMQ_ERLANG_COOKIE: XUqHCMEKuNLWcOzbSJBL
+            RABBITMQ_ERLANG_COOKIE: fnJcESBJzlfzhroOKWkq
         healthcheck:
             test:
                 - CMD-SHELL
@@ -21,30 +21,30 @@ services:
         restart: always
         volumes:
             - type: volume
-              source: rabbitmq-Z5ZOCm-data
+              source: rabbitmq-WfmJxZ-data
               target: /var/lib/rabbitmq
-    rabbitmq-Z5ZOCm-init:
+    rabbitmq-WfmJxZ-init:
         command:
             - -c
             - |
               set -exu
               for s in /db-scripts/*.sh; do source $$s; done
         depends_on:
-            rabbitmq-Z5ZOCm:
+            rabbitmq-WfmJxZ:
                 condition: service_healthy
                 restart: true
                 required: false
         entrypoint:
             - /bin/sh
         environment:
-            RABBITMQ_ERLANG_COOKIE: XUqHCMEKuNLWcOzbSJBL
+            RABBITMQ_ERLANG_COOKIE: fnJcESBJzlfzhroOKWkq
         image: rabbitmq:3-management-alpine
         labels:
             dev.score.compose.labels.is-init-container: "true"
-        network_mode: service:rabbitmq-Z5ZOCm
+        network_mode: service:rabbitmq-WfmJxZ
         volumes:
             - type: bind
-              source: .score-compose/mounts/rabbitmq-Z5ZOCm-db-scripts
+              source: .score-compose/mounts/rabbitmq-WfmJxZ-db-scripts
               target: /db-scripts
     thumbnail-service-main:
         annotations:
@@ -56,19 +56,20 @@ services:
                 condition: service_started
                 required: false
         environment:
-            AMQP_CONNECTION: amqp://user-zhrwGpOq:5jsJ6yVpgSqNpkPa@rabbitmq-Z5ZOCm:5672/vhost-cWdYUyZF
+            AMQP_CONNECTION: amqp://user-sAPXrduB:samPPpygmFFFreTa@rabbitmq-WfmJxZ:5672/vhost-uBuflISS
+            AMQP_THUMBNAILING_ROUTING_KEY: thumbnail-generation
         hostname: thumbnail-service
     wait-for-resources:
         command:
             - echo
         depends_on:
-            rabbitmq-Z5ZOCm:
+            rabbitmq-WfmJxZ:
                 condition: service_healthy
                 required: true
-            rabbitmq-Z5ZOCm-init:
+            rabbitmq-WfmJxZ-init:
                 condition: service_completed_successfully
                 required: true
         image: alpine
 volumes:
-    rabbitmq-Z5ZOCm-data:
+    rabbitmq-WfmJxZ-data:
         driver: local

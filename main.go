@@ -54,7 +54,7 @@ func mainInner() error {
 
 	thumbnailGenerationRoutingKey := os.Getenv("AMQP_THUMBNAILING_ROUTING_KEY")
 	if thumbnailGenerationRoutingKey == "" {
-		return errors.New("empty 'thumbnailGenerationRoutingKey'")
+		return errors.New("empty 'AMQP_THUMBNAILING_ROUTING_KEY'")
 	}
 
 	slog.Info("connecting to AMQP", "conn", regexp.MustCompile("://.+@").ReplaceAllString(connectionString, "://<masked>@"))

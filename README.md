@@ -44,7 +44,9 @@ Then send a new message on the default exchange to the `thumbnail-generation` ro
 Or run the automated test script:
 
 ```
-AMQP_CONNECTION=$(score-compose resources get-outputs 'amqp.default#shared' --format 'amqp://{{.username}}:{{.password}}@localhost:15672/{{.vhost}}') go test ./
+AMQP_CONNECTION=$(score-compose resources get-outputs 'amqp.default#shared' --format 'amqp://{{.username}}:{{.password}}@localhost:15672/{{.vhost}}') \
+    AMQP_THUMBNAILING_ROUTING_KEY=thumbnail-generation \
+    go test ./
 ```
 
 This will run the test and then write the output thumbnail to the local directory.

@@ -21,7 +21,13 @@ func TestMainIntegration(t *testing.T) {
 		return
 	}
 
-	rawLenna, err := os.ReadFile("lenna.png")
+	thumbnailGenerationRoutingKey := os.Getenv("AMQP_THUMBNAILING_ROUTING_KEY")
+	if thumbnailGenerationRoutingKey == "" {
+		t.Skip("empty 'AMQP_THUMBNAILING_ROUTING_KEY'")
+		return
+	}
+
+	rawLenna, err := os.ReadFile("samples/library.jpg")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -60,7 +66,7 @@ func TestMainIntegration(t *testing.T) {
 	messageId := strconv.Itoa(int(rand.Int64()))
 	if err := publisher.Publish(
 		rawLenna,
-		[]string{queueName},
+		[]string{thumbnailGenerationRoutingKey},
 		rabbitmq.WithPublishOptionsMessageID(messageId),
 		rabbitmq.WithPublishOptionsReplyTo(rcvQueueName),
 	); err != nil {
@@ -102,5 +108,5 @@ func TestMainIntegration(t *testing.T) {
 		t.Log("response", string(deliveries[0].Body))
 		t.Fatal("expected a successful response")
 	}
-	_ = os.WriteFile("lenna_output.jpeg", deliveries[0].Body, 0644)
+	_ = os.WriteFile("samples/library_output.jpeg", deliveries[0].Body, 0644)
 }
