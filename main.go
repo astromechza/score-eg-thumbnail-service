@@ -9,6 +9,7 @@ import (
 	"log"
 	"log/slog"
 	"os"
+	"regexp"
 	"time"
 
 	"github.com/disintegration/imaging"
@@ -16,7 +17,6 @@ import (
 	"github.com/wagslane/go-rabbitmq"
 )
 
-const queueName = "thumbnail-generation"
 const thumbnailWidth = 200
 const thumbnailHeight = 200
 
@@ -52,7 +52,12 @@ func mainInner() error {
 		return errors.New("empty 'AMQP_CONNECTION'")
 	}
 
-	slog.Info("connecting to AMQP", "conn", connectionString)
+	thumbnailGenerationRoutingKey := os.Getenv("AMQP_THUMBNAILING_ROUTING_KEY")
+	if thumbnailGenerationRoutingKey == "" {
+		return errors.New("empty 'thumbnailGenerationRoutingKey'")
+	}
+
+	slog.Info("connecting to AMQP", "conn", regexp.MustCompile("://.+@").ReplaceAllString(connectionString, "://<masked>@"))
 	conn, err := rabbitmq.NewConn(
 		connectionString,
 		rabbitmq.WithConnectionOptionsLogging,
@@ -76,10 +81,10 @@ func mainInner() error {
 	}
 	defer publisher.Close()
 
-	slog.Info("binding consumer to default exchange", "queue", queueName, "routing-key", queueName)
+	slog.Info("binding consumer to default exchange", "queue", thumbnailGenerationRoutingKey, "routing-key", thumbnailGenerationRoutingKey)
 	consumer, err := rabbitmq.NewConsumer(
 		conn,
-		queueName,
+		thumbnailGenerationRoutingKey,
 	)
 	if err != nil {
 		log.Fatal(err)

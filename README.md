@@ -8,7 +8,7 @@ The message protocol is very simple:
 
 Exchange: "" (default exchange)
 
-Routing Key: `thumbnail-generation`
+Routing Key: `thumbnail-generation` (OR the value of $AMQP_THUMBNAILING_ROUTING_KEY)
 
 Message Body: the raw png, jpeg, or gif contents, the size can be up to the rabbitmq max message size (usually 128MB to 2GB)
 

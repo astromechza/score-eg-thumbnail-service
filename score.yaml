@@ -6,6 +6,7 @@ containers:
     image: ghcr.io/astromechza/score-eg-thumbnail-service:main
     variables:
       AMQP_CONNECTION: "amqp://${resources.queue.username}:${resources.queue.password}@${resources.queue.host}:${resources.queue.port}/${resources.queue.vhost}"
+      AMQP_THUMBNAILING_ROUTING_KEY: "thumbnail-generation"
 resources:
   queue:
     type: amqp
