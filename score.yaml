@@ -10,4 +10,4 @@ containers:
 resources:
   queue:
     type: amqp
-    id: shared
+    id: common-queue
